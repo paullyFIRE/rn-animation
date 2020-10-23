@@ -1,12 +1,29 @@
-import React, { useCallback, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { View, Text, StatusBar, StyleSheet, Dimensions, Image } from 'react-native'
 import { PanGestureHandler, State } from 'react-native-gesture-handler'
 import AlarmClock from '../images/alarmClock.jpg'
-import Animated, { divide, multiply, useCode } from 'react-native-reanimated'
+import Animated, {
+  block,
+  call,
+  defined,
+  divide,
+  greaterThan,
+  max,
+  min,
+  multiply,
+  neq,
+  sub,
+  useCode,
+  timing,
+  Clock,
+} from 'react-native-reanimated'
+import Dial from './components/Dial'
 
 const { cond, eq, add, set, Value, event } = Animated
 
-const { height, width } = Dimensions.get('window')
+const { height } = Dimensions.get('window')
+
+// const AnimatedDial = Animated.createAnimatedComponent(Dial)
 
 const Icon = () => (
   <View
@@ -24,80 +41,91 @@ const Icon = () => (
   </View>
 )
 
-const imageHeight = height * 0.7
+const imageHeight = height * 0.8
 const imageWidth = imageHeight
 
 export default function ClimateControl() {
   const [temperature, setTemperature] = useState(85)
 
-  const velocityY = useRef(new Value(0))
-  const offsetY = useRef(new Value(height / 2))
+  const translateY = useRef(new Value(0))
   const gestureState = useRef(new Value(-1))
   const onGestureEvent = useRef(
     event([
       {
         nativeEvent: {
-          velocityY: velocityY.current,
+          translationY: translateY.current,
           state: gestureState.current,
         },
       },
     ])
   )
 
-  const rotation = cond(
-    eq(gestureState.current, State.ACTIVE),
-    add(offsetY.current, 1),
-    set(offsetY.current, add(offsetY.current, 1))
-  )
+  function calculateRotation(gestureTranslation, gestureState) {
+    const previousRotation = new Value(0)
+    const previousTranslation = new Value(0)
+    const dragging = new Value(0)
+    const rotation = new Value(0)
+
+    return cond(
+      eq(gestureState, State.ACTIVE),
+      [
+        cond(eq(dragging, 0), [
+          set(dragging, 1),
+          set(previousRotation, rotation),
+          set(previousTranslation, gestureTranslation),
+        ]),
+        set(
+          rotation,
+          add(
+            previousRotation,
+            multiply(2, divide(sub(previousRotation, gestureTranslation), imageHeight))
+          )
+        ),
+      ],
+      [set(dragging, 0), rotation]
+    )
+  }
+
+  const rotation = calculateRotation(translateY.current, gestureState.current)
 
   return (
     <>
       <StatusBar barStyle="light-content" />
-      <PanGestureHandler
-        maxPointers={1}
-        onGestureEvent={onGestureEvent.current}
-        onHandlerStateChange={onGestureEvent.current}
-      >
-        <Animated.View
-          style={{
-            borderColor: 'red',
-            borderWidth: 2,
-            position: 'absolute',
-            top: height / 2 - imageHeight / 2,
-            right: -imageWidth / 2 - imageWidth / 4,
-            width: imageWidth,
-            height: imageHeight,
-            zIndex: 1,
-            shadowColor: 'red',
-            shadowRadius: 2,
-            shadowOffset: {
-              width: 10,
-              height: 10,
-            },
-            transform: [
-              {
-                rotate: rotation,
-              },
-            ],
-          }}
-        >
-          <Animated.Image
-            source={AlarmClock}
-            style={{
-              width: imageWidth,
-              height: imageHeight,
-              borderRadius: imageHeight / 2,
-            }}
-          />
-        </Animated.View>
-      </PanGestureHandler>
 
       <View style={styles.root}>
+        <PanGestureHandler
+          maxPointers={1}
+          onGestureEvent={onGestureEvent.current}
+          onHandlerStateChange={onGestureEvent.current}
+        >
+          <Animated.View
+            style={{
+              position: 'absolute',
+              top: height / 2 - imageHeight / 2,
+              right: -imageWidth / 2 - imageWidth / 4,
+              width: imageWidth,
+              height: imageHeight,
+              backgroundColor: '#000',
+              shadowColor: '#DE1F55',
+              shadowRadius: 50,
+              shadowOffset: {
+                width: 0,
+                height: 2,
+              },
+              shadowOpacity: 1,
+              borderRadius: imageHeight / 2,
+              elevation: 5,
+            }}
+          >
+            <Dial dialSize={imageHeight} />
+          </Animated.View>
+        </PanGestureHandler>
+
         <View
           style={{
             position: 'absolute',
             top: height / 2 - 108,
-            left: 8 * 6,
+            left: 8 * 4,
           }}
         >
           <Text style={styles.temperatureLabel}>Temperature, *F</Text>
@@ -106,14 +134,14 @@ export default function ClimateControl() {
 
         <View>
           <View style={{ alignItems: 'center', flexDirection: 'row' }}>
-            <Text style={{ color: 'red' }}>Icon</Text>
+            <Text style={{ color: '#DE1F55' }}>Icon</Text>
             <Text style={styles.setScheduleLabel}>Set smart schedule</Text>
           </View>
 
           <View
             style={{
               flexDirection: 'row',
-              width: '70%',
+              width: '60%',
               justifyContent: 'space-between',
               marginTop: 8 * 4,
             }}
@@ -123,7 +151,9 @@ export default function ClimateControl() {
             <Icon />
           </View>
 
-          <View style={{ height: 50, borderColor: 'red', borderWidth: 1, marginTop: 8 * 4 }}></View>
+          <View
+            style={{ height: 50, borderColor: '#DE1F55', borderWidth: 1, marginTop: 8 * 4 }}
+          ></View>
 
           <View
             style={{
@@ -133,7 +163,7 @@ export default function ClimateControl() {
               marginVertical: 8 * 4,
             }}
           >
-            <Text style={{ color: 'red' }}>Power</Text>
+            <Text style={{ color: '#DE1F55' }}>Power</Text>
             <Text style={{ color: '#3f3f3f', paddingLeft: 8 * 2 }}>Hold to turn off</Text>
           </View>
         </View>
@@ -147,7 +177,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#000',
     flex: 1,
     justifyContent: 'flex-end',
-    paddingHorizontal: 8 * 6,
+    paddingHorizontal: 8 * 4,
   },
   temperatureLabel: {
     color: '#fff',
@@ -159,6 +189,6 @@ const styles = StyleSheet.create({
   },
   setScheduleLabel: {
     paddingLeft: 8 * 2,
-    color: 'red',
+    color: '#DE1F55',
   },
 })
