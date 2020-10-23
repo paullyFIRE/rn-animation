@@ -1,7 +1,10 @@
 import React, { useCallback, useRef, useState } from 'react'
-import { View, Text, StatusBar, StyleSheet, Dimensions, Image, Animated } from 'react-native'
-import { PanGestureHandler } from 'react-native-gesture-handler'
+import { View, Text, StatusBar, StyleSheet, Dimensions, Image } from 'react-native'
+import { PanGestureHandler, State } from 'react-native-gesture-handler'
 import AlarmClock from '../images/alarmClock.jpg'
+import Animated, { divide, multiply, useCode } from 'react-native-reanimated'
+
+const { cond, eq, add, set, Value, event } = Animated
 
 const { height, width } = Dimensions.get('window')
 
@@ -24,30 +27,37 @@ const Icon = () => (
 const imageHeight = height * 0.7
 const imageWidth = imageHeight
 
-export default function Home() {
+export default function ClimateControl() {
   const [temperature, setTemperature] = useState(85)
-  const rotation = useRef(new Animated.Value(0))
 
-  const gestureEvent = useCallback((event) => {
-    console.log(event.nativeEvent)
-    const { translationY, velocityY } = event.nativeEvent
+  const velocityY = useRef(new Value(0))
+  const offsetY = useRef(new Value(height / 2))
+  const gestureState = useRef(new Value(-1))
+  const onGestureEvent = useRef(
+    event([
+      {
+        nativeEvent: {
+          velocityY: velocityY.current,
+          state: gestureState.current,
+        },
+      },
+    ])
+  )
 
-    const unit = imageHeight/translationY
-    console.log('unit: ', unit);
-
-    if(velocityY > 0) {
-      rotation.current.setOffset(-25)
-    } else {
-      rotation.current.setOffset(25)
-    }
-
-    console.log('done')
-  }, [])
+  const rotation = cond(
+    eq(gestureState.current, State.ACTIVE),
+    add(offsetY.current, 1),
+    set(offsetY.current, add(offsetY.current, 1))
+  )
 
   return (
     <>
       <StatusBar barStyle="light-content" />
-      <PanGestureHandler onGestureEvent={gestureEvent} >
+      <PanGestureHandler
+        maxPointers={1}
+        onGestureEvent={onGestureEvent.current}
+        onHandlerStateChange={onGestureEvent.current}
+      >
         <Animated.View
           style={{
             borderColor: 'red',
@@ -66,20 +76,22 @@ export default function Home() {
             },
             transform: [
               {
-                rotate: rotation.current.interpolate({
-                  inputRange: [0, 360],
-                  outputRange: ['0deg', '360deg'],
-                }),
+                rotate: rotation,
               },
             ],
           }}
         >
-          <Image
+          <Animated.Image
             source={AlarmClock}
-            style={{ width: imageWidth, height: imageHeight, borderRadius: imageHeight / 2 }}
+            style={{
+              width: imageWidth,
+              height: imageHeight,
+              borderRadius: imageHeight / 2,
+            }}
           />
         </Animated.View>
       </PanGestureHandler>
+
       <View style={styles.root}>
         <View
           style={{
