@@ -1,19 +1,19 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { View } from 'react-native'
 import { PanGestureHandler, State } from 'react-native-gesture-handler'
-import Animated, { Value, event, useCode, call, cond, eq, set } from 'react-native-reanimated'
+import Animated, { Value, event, cond, eq, set, divide } from 'react-native-reanimated'
 
 const SLIDER_BUTTON_SIZE = 30
 
 export default React.memo(function Slider() {
-  const translateX = new Value(0)
+  const translateX = useRef(new Value(0))
   const gestureState = new Value(-1)
 
   const onGestureEvent = event([
     {
       nativeEvent: {
-        x: translateX,
+        x: translateX.current,
         state: gestureState,
       },
     },
@@ -30,7 +30,7 @@ export default React.memo(function Slider() {
     )
   }
 
-  const translationX = interaction(translateX, gestureState)
+  const translationX = interaction(translateX.current, gestureState)
 
   return (
     <View
@@ -42,14 +42,18 @@ export default React.memo(function Slider() {
         alignItems: 'center',
       }}
     >
-      <MaterialCommunityIcons
-        name="fan"
-        size={20}
-        color="#3f3f3f"
+      <Animated.View
         style={{
+          scaleX: 1,
           flex: 1,
+          height: '100%',
+          justifyContent: 'center',
+          alignItems: 'center',
+          transform: [{ rotate: divide(translationX, 8) }]
         }}
-      />
+      >
+        <MaterialCommunityIcons name="fan" size={20} color="#3f3f3f" />
+      </Animated.View>
 
       <PanGestureHandler
         maxPointers={1}
@@ -64,7 +68,6 @@ export default React.memo(function Slider() {
             paddingLeft: 8 * 2,
             // PanHandler Area
             // borderColor: 'blue',
-            // borderWidth: 1,
             justifyContent: 'center',
           }}
         >
