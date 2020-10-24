@@ -26,6 +26,11 @@ export default function Navigation() {
           options={{
             title: '',
             headerTransparent: true,
+            cardStyleInterpolator: ({ current }) => ({
+              cardStyle: {
+                opacity: current.progress,
+              },
+            }),
           }}
         />
       </Stack.Navigator>

@@ -8,6 +8,8 @@ import { StackNavigationOptions } from '@react-navigation/stack/lib/typescript/s
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import Animated, { interpolate, add } from 'react-native-reanimated'
 import { useMountAnimationNode } from './utils'
+import SetSchedule from './components/SetSchedule'
+
 const { height } = Dimensions.get('window')
 
 export default function ClimateControl({ navigation }) {
@@ -59,13 +61,8 @@ export default function ClimateControl({ navigation }) {
           <Text style={styles.temperature}>{temperature}</Text>
         </Animated.View>
 
-        <Animated.View
-          style={[mountUnmountAnimationStyles, { alignItems: 'center', flexDirection: 'row' }]}
-        >
-          <AntDesign name="clockcircleo" size={20} color="#3f3f3f" />
-          <TouchableOpacity activeOpacity={0.45}>
-            <Text style={styles.setScheduleLabel}>Set smart schedule</Text>
-          </TouchableOpacity>
+        <Animated.View style={mountUnmountAnimationStyles}>
+          <SetSchedule />
         </Animated.View>
 
         <Animated.View style={mountUnmountAnimationStyles}>
