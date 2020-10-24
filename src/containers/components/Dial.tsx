@@ -10,7 +10,7 @@ import Animated, {
   useCode,
 } from 'react-native-reanimated'
 
-import { Dimensions } from 'react-native'
+import { Dimensions, View } from 'react-native'
 import { PanGestureHandler, State } from 'react-native-gesture-handler'
 
 const { cond, eq, add, set, Value, event, multiply, sub, divide } = Animated
@@ -42,10 +42,12 @@ export default class Dial extends React.Component {
     const radianToDegrees = (radianValue) => multiply(radianValue, divide(180, Math.PI))
     const lowestMultipleOf10 = (value) => floor(divide(value, 10))
 
-    const didTick = neq(
+    const deltaLowestMultiplesOfTen = sub(
       lowestMultipleOf10(radianToDegrees(rotation)),
       lowestMultipleOf10(radianToDegrees(previousRotation))
     )
+    const didTick = neq(deltaLowestMultiplesOfTen, 0)
+
     const callOnTick = cond(
       didTick,
       cond(
@@ -98,68 +100,79 @@ export default class Dial extends React.Component {
     const rotation = this.calculateRotation(this.translateY, this.gestureState)
 
     return (
-      <PanGestureHandler
-        maxPointers={1}
-        onGestureEvent={this.onGestureEvent}
-        onHandlerStateChange={this.onGestureEvent}
+      <View
+        style={{
+          position: 'absolute',
+          top: height / 2 - DIAL_SIZE / 2,
+          right: -DIAL_SIZE / 2 - DIAL_SIZE / 4,
+          width: DIAL_SIZE,
+          height: DIAL_SIZE,
+          backgroundColor: '#000',
+          shadowColor: '#ed215b',
+          shadowRadius: 50,
+          shadowOffset: {
+            width: 10,
+            height: 2,
+          },
+          shadowOpacity: 0.85,
+          borderRadius: DIAL_SIZE / 2,
+          elevation: 5,
+        }}
       >
-        <Animated.View
+        <AnimatedSvg
+          width={DIAL_SIZE}
+          height={DIAL_SIZE}
           style={{
-            position: 'absolute',
-            top: height / 2 - DIAL_SIZE / 2,
-            right: -DIAL_SIZE / 2 - DIAL_SIZE / 4,
-            width: DIAL_SIZE,
-            height: DIAL_SIZE,
-            backgroundColor: '#000',
-            shadowColor: '#DE1F55',
-            shadowRadius: 50,
-            shadowOffset: {
-              width: 10,
-              height: 2,
-            },
-            shadowOpacity: 0.85,
-            borderRadius: DIAL_SIZE / 2,
-            elevation: 5,
+            transform: [{ rotate: rotation }],
           }}
         >
-          <AnimatedSvg
-            width={DIAL_SIZE}
-            height={DIAL_SIZE}
+          <Circle
+            cx={centerX}
+            cy={centerY}
+            r={OUTER_RING_RADIUS}
+            stroke="#ed215b"
+            strokeWidth={DIAL_STROKE_WIDTH}
+          />
+
+          <G>
+            {Array.from({ length: Math.floor(360 / DEGREES_PER_STICK) }).map((_, i) => {
+              const isBigStick = i % NTH_LONG_MARKER === 0
+
+              const y2 = isBigStick ? baseLineY2 : baseLineY1 - SHORT_MARKER_LENGTH
+
+              return (
+                <G
+                  key={i}
+                  transform={{
+                    rotation: DEGREES_PER_STICK * i,
+                    originX: centerX,
+                    originY: centerY,
+                  }}
+                >
+                  <Line stroke="#645257" strokeWidth={2} x={baseLineX} y1={baseLineY1} y2={y2} />
+                </G>
+              )
+            })}
+          </G>
+        </AnimatedSvg>
+        <PanGestureHandler
+          maxPointers={1}
+          onGestureEvent={this.onGestureEvent}
+          onHandlerStateChange={this.onGestureEvent}
+        >
+          <Animated.View
             style={{
-              transform: [{ rotate: rotation }],
+              position: 'absolute',
+              width: DIAL_SIZE / 1,
+              height: DIAL_SIZE / 1.25,
+              top: 0,
+              left: 0,
+              borderWidth: 1,
+              borderColor: 'red'
             }}
-          >
-            <Circle
-              cx={centerX}
-              cy={centerY}
-              r={OUTER_RING_RADIUS}
-              stroke="#DE1F55"
-              strokeWidth={DIAL_STROKE_WIDTH}
-            />
-
-            <G>
-              {Array.from({ length: Math.floor(360 / DEGREES_PER_STICK) }).map((_, i) => {
-                const isBigStick = i % NTH_LONG_MARKER === 0
-
-                const y2 = isBigStick ? baseLineY2 : baseLineY1 - SHORT_MARKER_LENGTH
-
-                return (
-                  <G
-                    key={i}
-                    transform={{
-                      rotation: DEGREES_PER_STICK * i,
-                      originX: centerX,
-                      originY: centerY,
-                    }}
-                  >
-                    <Line stroke="#645257" strokeWidth={2} x={baseLineX} y1={baseLineY1} y2={y2} />
-                  </G>
-                )
-              })}
-            </G>
-          </AnimatedSvg>
-        </Animated.View>
-      </PanGestureHandler>
+          />
+        </PanGestureHandler>
+      </View>
     )
   }
 }

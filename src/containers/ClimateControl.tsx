@@ -1,24 +1,10 @@
 import React, { useState } from 'react'
 import { View, Text, StatusBar, StyleSheet, Dimensions, Image } from 'react-native'
 import Dial from './components/Dial'
-
+import ToggleRow from './components/ToggleRow'
+import { AntDesign, FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons'
+import Slider from './components/Slider'
 const { height } = Dimensions.get('window')
-
-const Icon = () => (
-  <View
-    style={{
-      width: 50,
-      height: 50,
-      borderRadius: 50,
-      borderColor: '#e3e3e3',
-      borderWidth: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-    }}
-  >
-    <Text style={{ color: '#fff' }}>S</Text>
-  </View>
-)
 
 export default function ClimateControl() {
   const [temperature, setTemperature] = useState(85)
@@ -35,43 +21,31 @@ export default function ClimateControl() {
             left: 8 * 4,
           }}
         >
-          <Text style={styles.temperatureLabel}>Temperature, *F</Text>
+          <Text style={styles.temperatureLabel}>TEMPERATURE, *F</Text>
           <Text style={styles.temperature}>{temperature}</Text>
         </View>
 
         <View>
           <View style={{ alignItems: 'center', flexDirection: 'row' }}>
-            <Text style={{ color: '#DE1F55' }}>Icon</Text>
+            <AntDesign name="clockcircleo" size={20} color="#3f3f3f" />
             <Text style={styles.setScheduleLabel}>Set smart schedule</Text>
           </View>
 
-          <View
-            style={{
-              flexDirection: 'row',
-              width: '60%',
-              justifyContent: 'space-between',
-              marginTop: 8 * 4,
-            }}
-          >
-            <Icon />
-            <Icon />
-            <Icon />
-          </View>
+          <ToggleRow />
 
-          <View
-            style={{ height: 50, borderColor: '#DE1F55', borderWidth: 1, marginTop: 8 * 4 }}
-          ></View>
+          <Slider />
 
           <View
             style={{
               alignItems: 'center',
               justifyContent: 'center',
               flexDirection: 'row',
-              marginVertical: 8 * 4,
+              marginTop: 8 * 6,
+              marginBottom: 8 * 4,
             }}
           >
-            <Text style={{ color: '#DE1F55' }}>Power</Text>
-            <Text style={{ color: '#3f3f3f', paddingLeft: 8 * 2 }}>Hold to turn off</Text>
+            <FontAwesome name="power-off" size={24} color="#ed215b" />
+            <Text style={{ color: '#3f3f3f', paddingLeft: 8 * 2 }}>Hold to turn AC off</Text>
           </View>
         </View>
 
@@ -93,14 +67,19 @@ const styles = StyleSheet.create({
   },
   temperatureLabel: {
     color: '#fff',
-    fontSize: 24,
+    fontSize: 16,
+    letterSpacing: 0,
+    fontWeight: 'bold',
   },
   temperature: {
     color: '#fff',
-    fontSize: 108,
+    fontSize: 120,
+    fontWeight: 'bold',
+    lineHeight: 130,
   },
   setScheduleLabel: {
-    paddingLeft: 8 * 2,
-    color: '#DE1F55',
+    fontSize: 14,
+    paddingLeft: 8,
+    color: '#ed215b',
   },
 })
