@@ -1,6 +1,14 @@
 import React from 'react'
 import { Svg, G, Circle, Line } from 'react-native-svg'
-import Animated, { call, floor, greaterThan, interpolate, neq } from 'react-native-reanimated'
+import Animated, {
+  call,
+  Extrapolate,
+  floor,
+  greaterThan,
+  interpolate,
+  neq,
+  useCode,
+} from 'react-native-reanimated'
 
 import { Dimensions } from 'react-native'
 import { PanGestureHandler, State } from 'react-native-gesture-handler'
@@ -102,6 +110,19 @@ export default React.memo(function Dial(props) {
 
   const rotation = calculateRotation(translateY, gestureState)
 
+  const shadowRadius = interpolate(rotation, {
+    inputRange: [-1, 0, 2],
+    outputRange: [25, 50, 75],
+    extrapolate: Extrapolate.CLAMP,
+  })
+  const shadowOpacity = interpolate(rotation, {
+    inputRange: [-1, 0, 2],
+    outputRange: [0.25, 0.85, 1],
+    extrapolate: Extrapolate.CLAMP,
+  })
+
+  useCode(() => call([rotation], console.log), [])
+
   return (
     <Animated.View
       style={{
@@ -112,12 +133,12 @@ export default React.memo(function Dial(props) {
         height: DIAL_SIZE,
         backgroundColor: '#000',
         shadowColor: '#ed215b',
-        shadowRadius: 50,
+        shadowRadius: shadowRadius,
         shadowOffset: {
           width: 10,
           height: 2,
         },
-        shadowOpacity: 0.85,
+        shadowOpacity: shadowOpacity,
         borderRadius: DIAL_SIZE / 2,
         elevation: 5,
         transform: [

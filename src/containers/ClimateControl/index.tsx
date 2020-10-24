@@ -13,7 +13,7 @@ import SetSchedule from './components/SetSchedule'
 const { height } = Dimensions.get('window')
 
 export default function ClimateControl({ navigation }) {
-  const [temperature, setTemperature] = useState(85)
+  const [temperature, setTemperature] = useState(16)
 
   const animationProgress = useMountAnimationNode()
 
@@ -57,7 +57,7 @@ export default function ClimateControl({ navigation }) {
             opacity: animationProgress.current,
           }}
         >
-          <Text style={styles.temperatureLabel}>TEMPERATURE, °F</Text>
+          <Text style={styles.temperatureLabel}>TEMPERATURE, °C</Text>
           <Text style={styles.temperature}>{temperature}</Text>
         </Animated.View>
 
