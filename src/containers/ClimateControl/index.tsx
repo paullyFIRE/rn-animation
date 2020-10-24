@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useCallback, useRef, useState } from 'react'
 import { View, Text, StatusBar, StyleSheet, Dimensions, Image } from 'react-native'
 import Dial from './components/Dial'
 import ToggleRow from './components/ToggleRow'
@@ -6,10 +6,24 @@ import { AntDesign, FontAwesome, MaterialCommunityIcons } from '@expo/vector-ico
 import Slider from './components/Slider'
 import { StackNavigationOptions } from '@react-navigation/stack/lib/typescript/src/types'
 import { TouchableOpacity } from 'react-native-gesture-handler'
+import Animated, { interpolate, add } from 'react-native-reanimated'
+import { useMountAnimationNode } from './utils'
 const { height } = Dimensions.get('window')
 
 export default function ClimateControl({ navigation }) {
   const [temperature, setTemperature] = useState(85)
+
+  const animationProgress = useMountAnimationNode()
+
+  const slideInBottomValue = interpolate(animationProgress.current, {
+    inputRange: [0, 1],
+    outputRange: [100, 0],
+  })
+
+  const mountUnmountAnimationStyles = {
+    top: slideInBottomValue,
+    opacity: animationProgress.current,
+  }
 
   React.useLayoutEffect(() => {
     const navigationOptions: StackNavigationOptions = {
@@ -25,50 +39,60 @@ export default function ClimateControl({ navigation }) {
     navigation.setOptions(navigationOptions)
   }, [])
 
+  const onIncrement = useCallback(() => setTemperature((p) => p + 1), [])
+  const onDecrement = useCallback(() => setTemperature((p) => p - 1), [])
+
   return (
     <>
       <StatusBar barStyle="light-content" />
 
       <View style={styles.root}>
-        <View
+        <Animated.View
           style={{
             position: 'absolute',
-            top: height / 2 - 108,
+            top: add(height / 2 - 108, slideInBottomValue),
             left: 8 * 4,
+            opacity: animationProgress.current,
           }}
         >
           <Text style={styles.temperatureLabel}>TEMPERATURE, °F</Text>
           <Text style={styles.temperature}>{temperature}</Text>
-        </View>
+        </Animated.View>
 
-        <View style={{ alignItems: 'center', flexDirection: 'row' }}>
+        <Animated.View
+          style={[mountUnmountAnimationStyles, { alignItems: 'center', flexDirection: 'row' }]}
+        >
           <AntDesign name="clockcircleo" size={20} color="#3f3f3f" />
           <TouchableOpacity activeOpacity={0.45}>
             <Text style={styles.setScheduleLabel}>Set smart schedule</Text>
           </TouchableOpacity>
-        </View>
+        </Animated.View>
 
-        <ToggleRow />
+        <Animated.View style={mountUnmountAnimationStyles}>
+          <ToggleRow />
+        </Animated.View>
 
-        <Dial
-          onIncrement={() => setTemperature((p) => p + 1)}
-          onDecrement={() => setTemperature((p) => p - 1)}
-        />
+        <Dial {...{ onIncrement, onDecrement }} />
 
-        <Slider />
+        <Animated.View style={mountUnmountAnimationStyles}>
+          <Slider />
+        </Animated.View>
 
-        <View
-          style={{
-            alignItems: 'center',
-            justifyContent: 'center',
-            flexDirection: 'row',
-            marginTop: 8 * 6,
-            marginBottom: 8 * 4,
-          }}
+        <Animated.View
+          style={[
+            mountUnmountAnimationStyles,
+            {
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexDirection: 'row',
+              marginTop: 8 * 6,
+              marginBottom: 8 * 4,
+            },
+          ]}
         >
           <FontAwesome name="power-off" size={24} color="#ed215b" />
           <Text style={{ color: '#3f3f3f', paddingLeft: 8 * 2 }}>Hold to turn AC off</Text>
-        </View>
+        </Animated.View>
       </View>
     </>
   )
