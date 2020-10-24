@@ -23,6 +23,22 @@ export default function Home({ navigation }) {
         >
           <Text style={{ fontSize: 22, color: '#ed215b' }}>Climate Control</Text>
         </TouchableOpacity>
+        <TouchableOpacity
+          activeOpacity={0.35}
+          style={{
+            marginTop: 8 * 4,
+            paddingVertical: 8 * 2,
+            paddingHorizontal: 8 * 4,
+            borderColor: '#ed215b',
+            borderWidth: 2,
+            borderRadius: 6,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+          onPress={() => navigation.navigate('FoldingListRows')}
+        >
+          <Text style={{ fontSize: 22, color: '#ed215b' }}>Folding List Rows</Text>
+        </TouchableOpacity>
       </View>
     </>
   )

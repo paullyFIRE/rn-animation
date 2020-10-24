@@ -4,6 +4,7 @@ import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 
 import ClimateControl from './containers/ClimateControl'
+import FoldingListRows from './containers/FoldingListRows'
 import Home from './containers/Home'
 
 const Stack = createStackNavigator()
@@ -11,7 +12,7 @@ const Stack = createStackNavigator()
 export default function Navigation() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Home">
+      <Stack.Navigator initialRouteName="FoldingListRows">
         <Stack.Screen
           name="Home"
           component={Home}
@@ -28,13 +29,14 @@ export default function Navigation() {
             }),
           }}
         />
+        <Stack.Screen name="FoldingListRows" component={FoldingListRows} />
         <Stack.Screen
           name="ClimateControl"
           component={ClimateControl}
           options={{
             title: 'Climate Control',
             headerTitleStyle: {
-              color: "#ed215b"
+              color: '#ed215b',
             },
             headerTransparent: true,
             transitionSpec: {

@@ -1,6 +1,5 @@
-import { useFocusEffect, useNavigation } from '@react-navigation/native'
-import { Ref, useEffect, useRef, useState } from 'react'
-import Animated, {
+import { useRef } from 'react'
+import {
   block,
   Clock,
   cond,
@@ -13,13 +12,9 @@ import Animated, {
   debug,
   Easing,
   useCode,
-  call,
-  interpolate,
-  add,
-  sub,
 } from 'react-native-reanimated'
 
-export function runTiming(clock, value, dest) {
+export function runTiming(clock, value, dest, duration?) {
   const state = {
     finished: new Value(0),
     position: value,
@@ -28,7 +23,7 @@ export function runTiming(clock, value, dest) {
   }
 
   const config = {
-    duration: 500,
+    duration: duration || 500,
     toValue: dest,
     easing: Easing.inOut(Easing.ease),
   }
@@ -52,14 +47,16 @@ export function runTiming(clock, value, dest) {
   ])
 }
 
-export const useMountAnimationNode = () => {
-  const animationProgressNodeRef = useRef(new Value(0))
+export const useMountAnimationNode = (duration?: number) => {
+  // const animationProgressNodeRef = useRef(new Value(0))
 
+  // DEBUG
+  const animationProgressNodeRef = { current: new Value(0) }
   useCode(
     () => [
       set(
         animationProgressNodeRef.current,
-        runTiming(new Clock(), animationProgressNodeRef.current, new Value(1))
+        runTiming(new Clock(), animationProgressNodeRef.current, new Value(1), duration)
       ),
       animationProgressNodeRef.current,
     ],

@@ -12,7 +12,7 @@ import Animated, {
 
 import { Dimensions } from 'react-native'
 import { PanGestureHandler, State } from 'react-native-gesture-handler'
-import { runTiming, useMountAnimationNode } from '../utils'
+import {  useMountAnimationNode } from '../../../utils'
 
 const { cond, eq, add, set, Value, event, multiply, sub, divide } = Animated
 
