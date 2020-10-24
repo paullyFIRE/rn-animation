@@ -1,24 +1,13 @@
-import React, { useState } from 'react'
-import { AntDesign, FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons'
+import React from 'react'
+import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { View } from 'react-native'
 import { PanGestureHandler, State } from 'react-native-gesture-handler'
-import Animated, {
-  Value,
-  event,
-  useCode,
-  call,
-  cond,
-  eq,
-  set,
-  add,
-  sub,
-  divide,
-} from 'react-native-reanimated'
+import Animated, { Value, event, useCode, call, cond, eq, set } from 'react-native-reanimated'
 
 const SLIDER_BUTTON_SIZE = 30
 
-export default function Slider() {
-  const translateX = new Value(25)
+export default React.memo(function Slider() {
+  const translateX = new Value(0)
   const gestureState = new Value(-1)
 
   const onGestureEvent = event([
@@ -73,8 +62,9 @@ export default function Slider() {
             height: '100%',
             paddingRight: 8 * 4,
             paddingLeft: 8 * 2,
-            borderColor: 'blue',
-            borderWidth: 1,
+            // PanHandler Area
+            // borderColor: 'blue',
+            // borderWidth: 1,
             justifyContent: 'center',
           }}
         >
@@ -116,4 +106,4 @@ export default function Slider() {
       </PanGestureHandler>
     </View>
   )
-}
+})

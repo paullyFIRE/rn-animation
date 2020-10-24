@@ -51,7 +51,7 @@ export default class Dial extends React.Component {
     const callOnTick = cond(
       didTick,
       cond(
-        greaterThan(sub(previousRotation, rotation), 0),
+        greaterThan(sub(rotation, previousRotation), 0),
         call([], this.props.onIncrement),
         call([], this.props.onDecrement)
       )
@@ -167,8 +167,9 @@ export default class Dial extends React.Component {
               height: DIAL_SIZE / 1.25,
               top: 0,
               left: 0,
-              borderWidth: 1,
-              borderColor: 'red'
+              // Dial PanHandler Debug
+              // borderWidth: 1,
+              // borderColor: 'red'
             }}
           />
         </PanGestureHandler>
