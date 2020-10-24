@@ -11,21 +11,46 @@ const Stack = createStackNavigator()
 export default function Navigation() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName='Home'>
+      <Stack.Navigator initialRouteName="Home">
         <Stack.Screen
-          name='Home'
+          name="Home"
           component={Home}
           options={{
             title: '',
-            headerTransparent: true
+            headerTransparent: true,
+            cardStyleInterpolator: ({ current }) => ({
+              cardStyle: {
+                opacity: current.progress.interpolate({
+                  inputRange: [0, 0.75, 1],
+                  outputRange: [0, 0, 1],
+                }),
+              },
+            }),
           }}
         />
         <Stack.Screen
           name="ClimateControl"
           component={ClimateControl}
           options={{
-            title: '',
+            title: 'Climate Control',
+            headerTitleStyle: {
+              color: "#ed215b"
+            },
             headerTransparent: true,
+            transitionSpec: {
+              open: {
+                animation: 'timing',
+                config: {
+                  duration: 250,
+                },
+              },
+              close: {
+                animation: 'timing',
+                config: {
+                  duration: 250,
+                },
+              },
+            },
             cardStyleInterpolator: ({ current }) => ({
               cardStyle: {
                 opacity: current.progress,

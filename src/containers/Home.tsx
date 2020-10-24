@@ -6,10 +6,10 @@ export default function Home({ navigation }) {
     <>
       <StatusBar barStyle="light-content" />
       <View
-        style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#000' }}
+        style={{ flex: 1, justifyContent: 'flex-end', alignItems: 'center', backgroundColor: '#000', paddingVertical: 8 * 16 }}
       >
         <TouchableOpacity
-          activeOpacity={0}
+          activeOpacity={0.35}
           style={{
             paddingVertical: 8 * 2,
             paddingHorizontal: 8 * 4,

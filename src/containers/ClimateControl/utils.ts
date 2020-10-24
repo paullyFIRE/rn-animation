@@ -28,7 +28,7 @@ export function runTiming(clock, value, dest) {
   }
 
   const config = {
-    duration: 800,
+    duration: 500,
     toValue: dest,
     easing: Easing.inOut(Easing.ease),
   }
