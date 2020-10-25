@@ -35,7 +35,7 @@ export default function Home({ navigation }) {
             alignItems: 'center',
             justifyContent: 'center',
           }}
-          onPress={() => navigation.navigate('FoldingListRows')}
+          onPress={() => navigation.navigate('FoldingListRows.MenuCategories')}
         >
           <Text style={{ fontSize: 22, color: '#ed215b' }}>Folding List Rows</Text>
         </TouchableOpacity>

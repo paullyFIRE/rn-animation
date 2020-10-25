@@ -1,7 +1,9 @@
 import React from 'react'
-import { Text } from 'react-native'
+import { Text, TouchableOpacity } from 'react-native'
 import { Feather } from '@expo/vector-icons'
 import Animated, { concat } from 'react-native-reanimated'
+
+const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity)
 
 const featherIconNames = [
   'alert-circle',
@@ -14,8 +16,9 @@ const featherIconNames = [
   'activity',
 ]
 
-const Block = ({ rotateX, opacity, skewX }) => (
-  <Animated.View
+const Block = ({ rotateX, opacity, skewX, title, onPress }) => (
+  <AnimatedTouchable
+    onPress={onPress}
     style={{
       width: 155,
       borderRadius: 8,
@@ -51,9 +54,9 @@ const Block = ({ rotateX, opacity, skewX }) => (
         size={46}
         color="#615798"
       />
-      <Text style={{ marginTop: 4 }}>Menu Item {Math.floor(Math.random() * 25125)}</Text>
+      <Text style={{ marginTop: 4 }}>{title}</Text>
     </Animated.View>
-  </Animated.View>
+  </AnimatedTouchable>
 )
 
 export default Block

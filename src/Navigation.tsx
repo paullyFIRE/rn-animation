@@ -4,7 +4,8 @@ import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 
 import ClimateControl from './containers/ClimateControl'
-import FoldingListRows from './containers/FoldingListRows'
+import CategoryOverview from './containers/FoldingListRows/CategoryOverview'
+import MenuCategories from './containers/FoldingListRows/MenuCategories'
 import Home from './containers/Home'
 
 const Stack = createStackNavigator()
@@ -29,15 +30,42 @@ export default function Navigation() {
             }),
           }}
         />
-        <Stack.Screen name="FoldingListRows" component={FoldingListRows} options={{
-          headerTransparent: true,
-          title: '',
-          headerBackTitleVisible: false,
-          headerTintColor: '#615798',
-          headerLeftContainerStyle: {
-            paddingLeft: 8 * 2
-          },
-        }}/>
+        <Stack.Screen
+          name="FoldingListRows.MenuCategories"
+          component={MenuCategories}
+          options={{
+            transitionSpec: {
+              open: {
+                animation: 'timing',
+                config: {
+                  duration: 250,
+                },
+              },
+              close: {
+                animation: 'timing',
+                config: {
+                  duration: 250,
+                },
+              },
+            },
+            cardStyleInterpolator: ({ current }) => ({
+              cardStyle: {
+                opacity: current.progress,
+              },
+            }),
+          }}
+        />
+        <Stack.Screen
+          name="FoldingListRows.CategoryOverview"
+          component={CategoryOverview}
+          options={{
+            cardStyleInterpolator: ({ current }) => ({
+              cardStyle: {
+                opacity: current.progress,
+              },
+            }),
+          }}
+        />
         <Stack.Screen
           name="ClimateControl"
           component={ClimateControl}
