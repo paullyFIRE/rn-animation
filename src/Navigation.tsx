@@ -33,7 +33,7 @@ export default function Navigation() {
           headerTransparent: true,
           title: '',
           headerBackTitleVisible: false,
-          headerTintColor: '#3f48cc',
+          headerTintColor: '#615798',
           headerLeftContainerStyle: {
             paddingLeft: 8 * 2
           },

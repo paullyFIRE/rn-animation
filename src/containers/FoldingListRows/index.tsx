@@ -1,5 +1,6 @@
+import { useCardAnimation } from '@react-navigation/stack'
 import React, { useRef } from 'react'
-import { View, Text, Dimensions } from 'react-native'
+import { View, Text, Dimensions, Animated as RNAnimated } from 'react-native'
 import Animated, {
   add,
   concat,
@@ -12,62 +13,10 @@ import Animated, {
   useCode,
   call,
 } from 'react-native-reanimated'
-import { Feather } from '@expo/vector-icons'
+
+import ListBlock from './components/ListBlock'
 
 const { height, width } = Dimensions.get('window')
-
-const featherIconNames = [
-  'alert-circle',
-  'align-justify',
-  'aperture',
-  'arrow-down',
-  'archive',
-  'alert-triangle',
-  'airplay',
-  'activity',
-]
-
-const Block = ({ rotateX, opacity, skewX }) => (
-  <Animated.View
-    style={{
-      width: 155,
-      borderRadius: 8,
-      backgroundColor: '#fff',
-      shadowColor: '#d2d2d2',
-      shadowRadius: 5,
-      shadowOffset: {
-        width: 4,
-        height: 6,
-      },
-      shadowOpacity: 0.25,
-      ...(rotateX && {
-        transform: [
-          {
-            skewX: concat(skewX, 'deg'),
-            rotate: concat(skewX, 'deg'),
-          },
-        ],
-      }),
-    }}
-  >
-    <Animated.View
-      style={{
-        flex: 1,
-        padding: 8,
-        justifyContent: 'center',
-        alignItems: 'center',
-        ...(opacity && { opacity }),
-      }}
-    >
-      <Feather
-        name={featherIconNames[Math.floor(Math.random() * featherIconNames.length)]}
-        size={46}
-        color="#3f48cc"
-      />
-      <Text style={{ marginTop: 4 }}>Menu Item {Math.floor(Math.random() * 25125)}</Text>
-    </Animated.View>
-  </Animated.View>
-)
 
 export default function FoldingListRows() {
   const CARD_HEIGHT = 155
@@ -88,6 +37,10 @@ export default function FoldingListRows() {
 
   useCode(() => call([dampenedScrollY, scrollY.current], console.log), [])
 
+  const {
+    current: { progress: navigationTransitionProgress },
+  } = useCardAnimation()
+
   return (
     <View
       style={{
@@ -97,95 +50,132 @@ export default function FoldingListRows() {
         paddingHorizontal: width * 0.05,
       }}
     >
-      <Text style={{ fontSize: 48, textAlign: 'left', fontWeight: 'bold' }}>Menu</Text>
-      <Animated.ScrollView
-        showsVerticalScrollIndicator={false}
-        decelerationRate={0}
-        scrollEventThrottle={16}
-        snapToInterval={ROW_HEIGHTS * SCROLL_MULTIPLE}
-        contentContainerStyle={{
-          height: height + (ROWS - ROWS_THAT_CAN_FIT) * (ROW_HEIGHTS * SCROLL_MULTIPLE),
-        }}
-        onScroll={Animated.event([
-          {
-            nativeEvent: {
-              velocity: { y: velocityY },
-              contentOffset: { y: scrollY.current },
+      <RNAnimated.Text
+        style={{
+          fontSize: 48,
+          textAlign: 'left',
+          fontWeight: 'bold',
+          transform: [
+            {
+              translateX: navigationTransitionProgress.interpolate({
+                inputRange: [0, 0.55, 1],
+                outputRange: [100, 100, 0],
+              }),
             },
-          },
-        ])}
+          ],
+          opacity: navigationTransitionProgress.interpolate({
+            inputRange: [0, 0.55, 1],
+            outputRange: [0, 0, 1],
+          }),
+        }}
       >
-        <Animated.View
-          style={{
-            alignItems: 'center',
-            transform: [
-              {
-                translateY: max(0, add(scrollY.current, ROW_MARGIN)),
-              },
-            ],
+        Menu
+      </RNAnimated.Text>
+      <RNAnimated.View style={{
+         transform: [
+          {
+            translateY: navigationTransitionProgress.interpolate({
+              inputRange: [0, 0.55, 1],
+              outputRange: [100, 100, 0],
+            }),
+          },
+        ],
+        opacity: navigationTransitionProgress.interpolate({
+          inputRange: [0, 0.55, 1],
+          outputRange: [0, 0, 1],
+        }),
+      }}>
+        <Animated.ScrollView
+          showsVerticalScrollIndicator={false}
+          decelerationRate={0}
+          scrollEventThrottle={16}
+          snapToInterval={ROW_HEIGHTS * SCROLL_MULTIPLE}
+          contentContainerStyle={{
+            height: height + (ROWS - ROWS_THAT_CAN_FIT) * (ROW_HEIGHTS * SCROLL_MULTIPLE),
           }}
+          onScroll={Animated.event([
+            {
+              nativeEvent: {
+                velocity: { y: velocityY },
+                contentOffset: { y: scrollY.current },
+              },
+            },
+          ])}
         >
-          {Array.from({ length: ROWS }).map((_, index) => {
-            const makeIndexAwareRange = (rangeInput) => (rangeInput + index) * ROW_HEIGHTS
+          <Animated.View
+            style={{
+              alignItems: 'center',
+              transform: [
+                {
+                  translateY: max(0, add(scrollY.current, ROW_MARGIN)),
+                },
+              ],
+            }}
+          >
+            {Array.from({ length: ROWS }).map((_, index) => {
+              const makeIndexAwareRange = (rangeInput) => (rangeInput + index) * ROW_HEIGHTS
 
-            const baseRanges = [0, 0.5, 1]
-            const inputRange = baseRanges.map(makeIndexAwareRange)
+              const baseRanges = [0, 0.5, 1]
+              const inputRange = baseRanges.map(makeIndexAwareRange)
 
-            const rotateX = interpolate(dampenedScrollY, {
-              inputRange: inputRange,
-              outputRange: [0, -75, -90],
-              extrapolate: Extrapolate.CLAMP,
-            })
+              const rotateX = interpolate(dampenedScrollY, {
+                inputRange: inputRange,
+                outputRange: [0, -75, -90],
+                extrapolate: Extrapolate.CLAMP,
+              })
 
-            const skewX = interpolate(dampenedScrollY, {
-              inputRange: [0, 1].map(makeIndexAwareRange),
-              outputRange: [0, 10],
-              extrapolate: Extrapolate.CLAMP,
-            })
+              const skewX = interpolate(dampenedScrollY, {
+                inputRange: [0, 1].map(makeIndexAwareRange),
+                outputRange: [0, 10],
+                extrapolate: Extrapolate.CLAMP,
+              })
 
-            const cardHeight = interpolate(dampenedScrollY, {
-              inputRange: [0, 0.5, 0.75, 1].map(makeIndexAwareRange),
-              outputRange: [CARD_HEIGHT, CARD_HEIGHT * 0.45, CARD_HEIGHT * 0.15, 0],
-              extrapolate: Extrapolate.CLAMP,
-            })
+              const cardHeight = interpolate(dampenedScrollY, {
+                inputRange: [0, 0.5, 0.75, 1].map(makeIndexAwareRange),
+                outputRange: [CARD_HEIGHT, CARD_HEIGHT * 0.45, CARD_HEIGHT * 0.15, 0],
+                extrapolate: Extrapolate.CLAMP,
+              })
 
-            const rowMarign = interpolate(dampenedScrollY, {
-              inputRange: inputRange,
-              outputRange: [ROW_MARGIN, ROW_MARGIN * 0.5, 0],
-              extrapolate: Extrapolate.CLAMP,
-            })
+              const rowMarign = interpolate(dampenedScrollY, {
+                inputRange: inputRange,
+                outputRange: [ROW_MARGIN, ROW_MARGIN * 0.5, 0],
+                extrapolate: Extrapolate.CLAMP,
+              })
 
-            const opacity = interpolate(dampenedScrollY, {
-              inputRange: inputRange,
-              outputRange: [1, 0.8, 0],
-              extrapolate: Extrapolate.CLAMP,
-            })
+              const opacity = interpolate(dampenedScrollY, {
+                inputRange: inputRange,
+                outputRange: [1, 0.8, 0],
+                extrapolate: Extrapolate.CLAMP,
+              })
 
-            const shouldHide = index < ROWS - ROWS_THAT_CAN_FIT
+              const shouldHide = index < ROWS - ROWS_THAT_CAN_FIT
 
-            return (
-              <Animated.View
-                key={index}
-                style={{
-                  flexDirection: 'row',
-                  width: '100%',
-                  height: shouldHide ? cardHeight : CARD_HEIGHT,
-                  justifyContent: 'space-between',
-                  paddingBottom: shouldHide ? rowMarign : ROW_MARGIN,
-                  transform: [
-                    {
-                      rotateX: concat(shouldHide ? rotateX : 0, 'deg'),
-                    },
-                  ],
-                }}
-              >
-                <Block {...(shouldHide && { rotateX, opacity, skewX })} />
-                <Block {...(shouldHide && { rotateX, opacity, skewX: multiply(skewX, -1) })} />
-              </Animated.View>
-            )
-          })}
-        </Animated.View>
-      </Animated.ScrollView>
+              return (
+                <Animated.View
+                  key={index}
+                  style={{
+                    flexDirection: 'row',
+                    width: '100%',
+                    height: shouldHide ? cardHeight : CARD_HEIGHT,
+                    justifyContent: 'space-between',
+                    paddingBottom: shouldHide ? rowMarign : ROW_MARGIN,
+                    transform: [
+                      {
+                        rotateX: concat(shouldHide ? rotateX : 0, 'deg'),
+                      },
+                    ],
+                  }}
+                >
+                  <ListBlock {...(shouldHide && { rotateX, opacity, skewX })} />
+                  <ListBlock
+                    {...(shouldHide && { rotateX, opacity, skewX: multiply(skewX, -1) })}
+                  />
+                </Animated.View>
+              )
+            })}
+          </Animated.View>
+        </Animated.ScrollView>
+      </RNAnimated.View>
     </View>
   )
 }
