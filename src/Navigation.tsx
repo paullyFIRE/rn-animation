@@ -29,7 +29,15 @@ export default function Navigation() {
             }),
           }}
         />
-        <Stack.Screen name="FoldingListRows" component={FoldingListRows} />
+        <Stack.Screen name="FoldingListRows" component={FoldingListRows} options={{
+          headerTransparent: true,
+          title: '',
+          headerBackTitleVisible: false,
+          headerTintColor: '#3f48cc',
+          headerLeftContainerStyle: {
+            paddingLeft: 8 * 2
+          },
+        }}/>
         <Stack.Screen
           name="ClimateControl"
           component={ClimateControl}

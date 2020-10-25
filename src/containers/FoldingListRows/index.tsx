@@ -1,4 +1,4 @@
-import React, {  useRef } from 'react'
+import React, { useRef } from 'react'
 import { View, Text, Dimensions } from 'react-native'
 import Animated, {
   add,
@@ -14,7 +14,7 @@ import Animated, {
 } from 'react-native-reanimated'
 import { Feather } from '@expo/vector-icons'
 
-const { height } = Dimensions.get('window')
+const { height, width } = Dimensions.get('window')
 
 const featherIconNames = [
   'alert-circle',
@@ -43,7 +43,6 @@ const Block = ({ rotateX, opacity, skewX }) => (
       ...(rotateX && {
         transform: [
           {
-            rotateX: concat(rotateX, 'deg'),
             skewX: concat(skewX, 'deg'),
             rotate: concat(skewX, 'deg'),
           },
@@ -63,7 +62,7 @@ const Block = ({ rotateX, opacity, skewX }) => (
       <Feather
         name={featherIconNames[Math.floor(Math.random() * featherIconNames.length)]}
         size={46}
-        color="black"
+        color="#3f48cc"
       />
       <Text style={{ marginTop: 4 }}>Menu Item {Math.floor(Math.random() * 25125)}</Text>
     </Animated.View>
@@ -83,7 +82,7 @@ export default function FoldingListRows() {
   const velocityY = new Value(0)
 
   // artifical stiffness by making the scrollView X time longer
-  const SCROLL_MULTIPLE = 16
+  const SCROLL_MULTIPLE = 12
 
   const dampenedScrollY = divide(scrollY.current, SCROLL_MULTIPLE)
 
@@ -94,15 +93,18 @@ export default function FoldingListRows() {
       style={{
         flex: 1,
         backgroundColor: '#e9eef9',
-        alignItems: 'center',
+        paddingTop: 8 * 8,
+        paddingHorizontal: width * 0.05,
       }}
     >
+      <Text style={{ fontSize: 48, textAlign: 'left', fontWeight: 'bold' }}>Menu</Text>
       <Animated.ScrollView
+        showsVerticalScrollIndicator={false}
         decelerationRate={0}
         scrollEventThrottle={16}
         snapToInterval={ROW_HEIGHTS * SCROLL_MULTIPLE}
         contentContainerStyle={{
-          height: height + (ROWS - ROWS_THAT_CAN_FIT) * (ROW_HEIGHTS  * SCROLL_MULTIPLE),
+          height: height + (ROWS - ROWS_THAT_CAN_FIT) * (ROW_HEIGHTS * SCROLL_MULTIPLE),
         }}
         onScroll={Animated.event([
           {
@@ -166,7 +168,7 @@ export default function FoldingListRows() {
                 key={index}
                 style={{
                   flexDirection: 'row',
-                  width: '90%',
+                  width: '100%',
                   height: shouldHide ? cardHeight : CARD_HEIGHT,
                   justifyContent: 'space-between',
                   paddingBottom: shouldHide ? rowMarign : ROW_MARGIN,
