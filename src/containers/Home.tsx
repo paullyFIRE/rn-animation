@@ -1,44 +1,33 @@
 import React from 'react'
-import { View, Text, TouchableOpacity, StatusBar } from 'react-native'
+import { View, Text, TouchableOpacity, StatusBar, Linking } from 'react-native'
+import HomeButton from '../components/HomeButton'
 
 export default function Home({ navigation }) {
   return (
     <>
       <StatusBar barStyle="light-content" />
       <View
-        style={{ flex: 1, justifyContent: 'flex-end', alignItems: 'center', backgroundColor: '#000', paddingVertical: 8 * 16 }}
+        style={{
+          flex: 1,
+          justifyContent: 'flex-end',
+          alignItems: 'center',
+          backgroundColor: '#000',
+          paddingVertical: 8 * 16,
+        }}
       >
-        <TouchableOpacity
-          activeOpacity={0.35}
-          style={{
-            paddingVertical: 8 * 2,
-            paddingHorizontal: 8 * 4,
-            borderColor: '#ed215b',
-            borderWidth: 2,
-            borderRadius: 6,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-          onPress={() => navigation.navigate('ClimateControl')}
+        <HomeButton
+          inspirationUrl="https://dribbble.com/shots/5534531-Smart-Home-App-Thermostat"
+          navigateTo="ClimateControl"
         >
-          <Text style={{ fontSize: 22, color: '#ed215b' }}>Climate Control</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          activeOpacity={0.35}
-          style={{
-            marginTop: 8 * 4,
-            paddingVertical: 8 * 2,
-            paddingHorizontal: 8 * 4,
-            borderColor: '#ed215b',
-            borderWidth: 2,
-            borderRadius: 6,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-          onPress={() => navigation.navigate('FoldingListRows.MenuCategories')}
+          Climate Control
+        </HomeButton>
+
+        <HomeButton
+          inspirationUrl="https://dribbble.com/shots/6346015-Restaurant-app"
+          navigateTo="FoldingListRows.MenuCategories"
         >
-          <Text style={{ fontSize: 22, color: '#ed215b' }}>Folding List Rows</Text>
-        </TouchableOpacity>
+          Folding List Rows
+        </HomeButton>
       </View>
     </>
   )

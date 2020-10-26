@@ -121,8 +121,6 @@ export default React.memo(function Dial(props) {
     extrapolate: Extrapolate.CLAMP,
   })
 
-  useCode(() => call([rotation], console.log), [])
-
   return (
     <Animated.View
       style={{
