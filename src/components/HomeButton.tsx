@@ -18,6 +18,7 @@ export default function HomeButton({ navigateTo = 'Home', inspirationUrl = '', c
         borderRadius: 6,
         alignItems: 'center',
         justifyContent: 'center',
+        minWidth: '80%'
       }}
       onPress={() => navigation.navigate(navigateTo)}
     >

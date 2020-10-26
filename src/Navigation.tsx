@@ -8,6 +8,8 @@ import CategoryOverview from './containers/FoldingListRows/CategoryOverview'
 import MenuCategories from './containers/FoldingListRows/MenuCategories'
 import Home from './containers/Home'
 
+import LiquidSwipeV1 from './containers/LiquidSwipeV1'
+
 const Stack = createStackNavigator()
 
 export default function Navigation() {
@@ -58,6 +60,17 @@ export default function Navigation() {
         <Stack.Screen
           name="FoldingListRows.CategoryOverview"
           component={CategoryOverview}
+          options={{
+            cardStyleInterpolator: ({ current }) => ({
+              cardStyle: {
+                opacity: current.progress,
+              },
+            }),
+          }}
+        />
+        <Stack.Screen
+          name="LiquidSwipe.V1"
+          component={LiquidSwipeV1}
           options={{
             cardStyleInterpolator: ({ current }) => ({
               cardStyle: {

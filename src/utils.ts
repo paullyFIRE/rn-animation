@@ -48,10 +48,9 @@ export function runTiming(clock, value, dest, duration?) {
 }
 
 export const useMountAnimationNode = (duration?: number) => {
-  // const animationProgressNodeRef = useRef(new Value(0))
+  const animationProgressNodeRef = useRef(new Value(0))
 
   // DEBUG
-  const animationProgressNodeRef = { current: new Value(0) }
   useCode(
     () => [
       set(

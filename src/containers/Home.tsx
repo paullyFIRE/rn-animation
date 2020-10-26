@@ -28,6 +28,13 @@ export default function Home({ navigation }) {
         >
           Folding List Rows
         </HomeButton>
+
+        <HomeButton
+          inspirationUrl="https://dribbble.com/shots/6390703-Liquid-Swipe-Interaction"
+          navigateTo="LiquidSwipe.V1"
+        >
+          Liquid Swipe V1
+        </HomeButton>
       </View>
     </>
   )
