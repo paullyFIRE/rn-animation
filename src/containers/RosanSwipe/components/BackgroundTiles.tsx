@@ -1,7 +1,8 @@
 import { useCardAnimation } from '@react-navigation/stack'
-import React from 'react'
+import React, { useRef } from 'react'
 import { View, Animated as RNAnimated, StyleSheet, Dimensions } from 'react-native'
-import Animated from 'react-native-reanimated'
+import { PanGestureHandler, State } from 'react-native-gesture-handler'
+import Animated, { call, cond, eq, event, set, sub, useCode, Value } from 'react-native-reanimated'
 
 const { width, height } = Dimensions.get('window')
 
@@ -13,7 +14,7 @@ const colors = {
   flatGreen: '#01ed86',
 }
 
-export default function BackgroundTiles({ translateY = 0 }) {
+export default function BackgroundTiles({ translateY }) {
   const { current } = useCardAnimation()
 
   const columnOneWidth = width * 0.6
@@ -60,84 +61,121 @@ export default function BackgroundTiles({ translateY = 0 }) {
     ],
   }
 
+  const gestureState = new Value(-1)
+
+  function interaction(gestureTranslation, gestureState) {
+    const dragging = new Value(0)
+    const position = new Value(0)
+
+    return cond(
+      eq(gestureState, State.ACTIVE),
+      [cond(eq(dragging, 0), [set(dragging, 1)]), set(position, gestureTranslation)],
+      [set(dragging, 0), position]
+    )
+  }
+
+  const translationY = interaction(translateY.current, gestureState)
+
+  useCode(() => call([translationY], console.log), [])
+
+  const onGestureEvent = event([
+    {
+      nativeEvent: {
+        absoluteY: translateY.current,
+        state: gestureState,
+      },
+    },
+  ])
+
   return (
-    <Animated.View
-      style={[
-        StyleSheet.absoluteFillObject,
-        {
-          backgroundColor: '#868be2',
-          transform: [{ translateY: translateY }],
-        },
-      ]}
-    >
+    <PanGestureHandler onGestureEvent={onGestureEvent} onHandlerStateChange={onGestureEvent}>
       <Animated.View
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          transform: [
-            { rotate: '35deg' },
-            {
-              translateY: 0,
-              translateX: -width * 0.8,
-            },
-            {
-              skewX: '-45deg',
-              skewY: '35deg',
-            },
-          ],
-          flexDirection: 'row',
-        }}
+        style={[
+          StyleSheet.absoluteFillObject,
+          {
+            backgroundColor: '#868be2',
+            transform: [{ translateY: cond(eq(translationY, 0), translationY, sub(translationY, height / 2)) }],
+          },
+        ]}
       >
-        <View style={{ width: columnOneWidth, flexDirection: 'column' }}>
-          <RNAnimated.View
-            style={[rowOneTransitions, { backgroundColor: colors.navy3, height: rowOneHeight }]}
-          />
-          <RNAnimated.View
-            style={[columnTwoTransitions, { backgroundColor: colors.navy3, height: rowTwoHeight }]}
-          />
-          <RNAnimated.View
-            style={[
-              columnThreeTransitions,
-              { backgroundColor: colors.navy1, height: rowThreeHeight },
-            ]}
-          />
-        </View>
+        <Animated.View
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            transform: [
+              { rotate: '35deg' },
+              {
+                translateY: 0,
+                translateX: -width * 0.8,
+              },
+              {
+                skewX: '-45deg',
+                skewY: '35deg',
+              },
+            ],
+            flexDirection: 'row',
+          }}
+        >
+          <View style={{ width: columnOneWidth, flexDirection: 'column' }}>
+            <RNAnimated.View
+              style={[rowOneTransitions, { backgroundColor: colors.navy3, height: rowOneHeight }]}
+            />
+            <RNAnimated.View
+              style={[
+                columnTwoTransitions,
+                { backgroundColor: colors.navy3, height: rowTwoHeight },
+              ]}
+            />
+            <RNAnimated.View
+              style={[
+                columnThreeTransitions,
+                { backgroundColor: colors.navy1, height: rowThreeHeight },
+              ]}
+            />
+          </View>
 
-        <View style={{ width: columnTwoWidth, flexDirection: 'column' }}>
-          <RNAnimated.View
-            style={[rowOneTransitions, { backgroundColor: colors.navy2, height: rowOneHeight }]}
-          />
-          <RNAnimated.View
-            style={[columnTwoTransitions, { backgroundColor: colors.navy3, height: rowTwoHeight }]}
-          />
-          <RNAnimated.View
-            style={[
-              columnThreeTransitions,
-              { backgroundColor: colors.navy1, height: rowThreeHeight },
-            ]}
-          />
-        </View>
+          <View style={{ width: columnTwoWidth, flexDirection: 'column' }}>
+            <RNAnimated.View
+              style={[rowOneTransitions, { backgroundColor: colors.navy2, height: rowOneHeight }]}
+            />
+            <RNAnimated.View
+              style={[
+                columnTwoTransitions,
+                { backgroundColor: colors.navy3, height: rowTwoHeight },
+              ]}
+            />
+            <RNAnimated.View
+              style={[
+                columnThreeTransitions,
+                { backgroundColor: colors.navy1, height: rowThreeHeight },
+              ]}
+            />
+          </View>
 
-        <View style={{ width: columnThreeWidth, flexDirection: 'column' }}>
-          <RNAnimated.View
-            style={[rowOneTransitions, { backgroundColor: colors.flatGreen, height: rowOneHeight }]}
-          />
+          <View style={{ width: columnThreeWidth, flexDirection: 'column' }}>
+            <RNAnimated.View
+              style={[
+                rowOneTransitions,
+                { backgroundColor: colors.flatGreen, height: rowOneHeight },
+              ]}
+            />
 
-          <RNAnimated.View
-            style={[
-              columnTwoTransitions,
-              { backgroundColor: colors.flatRed, height: rowTwoHeight },
-            ]}
-          />
-          <RNAnimated.View
-            style={[
-              columnThreeTransitions,
-              { backgroundColor: colors.navy1, height: rowThreeHeight },
-            ]}
-          />
-        </View>
+            <RNAnimated.View
+              style={[
+                columnTwoTransitions,
+                { backgroundColor: colors.flatRed, height: rowTwoHeight },
+              ]}
+            />
+            <RNAnimated.View
+              style={[
+                columnThreeTransitions,
+                { backgroundColor: colors.navy1, height: rowThreeHeight },
+              ]}
+            />
+          </View>
+        </Animated.View>
       </Animated.View>
-    </Animated.View>
+    </PanGestureHandler>
   )
 }
