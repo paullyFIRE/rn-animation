@@ -9,6 +9,7 @@ import MenuCategories from './containers/FoldingListRows/MenuCategories'
 import Home from './containers/Home'
 
 import LiquidSwipeV1 from './containers/LiquidSwipeV1'
+import RosanSwipe from './containers/RosanSwipe'
 
 const Stack = createStackNavigator()
 
@@ -72,6 +73,24 @@ export default function Navigation() {
           name="LiquidSwipe.V1"
           component={LiquidSwipeV1}
           options={{
+            cardStyleInterpolator: ({ current }) => ({
+              cardStyle: {
+                opacity: current.progress,
+              },
+            }),
+          }}
+        />
+        <Stack.Screen
+          name="RosanSwipe"
+          component={RosanSwipe}
+          options={{
+            headerTransparent: true,
+            title: '',
+            headerBackTitleVisible: false,
+            headerTintColor: '#fff',
+            headerLeftContainerStyle: {
+              paddingLeft: 8 * 2,
+            },
             cardStyleInterpolator: ({ current }) => ({
               cardStyle: {
                 opacity: current.progress,

@@ -35,6 +35,13 @@ export default function Home({ navigation }) {
         >
           Liquid Swipe V1
         </HomeButton>
+
+        <HomeButton
+          inspirationUrl="https://dribbble.com/shots/6487913-Rosan-App-Swipe-Animation"
+          navigateTo="RosanSwipe"
+        >
+          Rosan Swipe
+        </HomeButton>
       </View>
     </>
   )

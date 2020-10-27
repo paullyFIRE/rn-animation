@@ -29,7 +29,7 @@ export default function MenuCategories({ navigation }) {
   const velocityY = new Value(0)
 
   // artifical stiffness by making the scrollView X time longer
-  const SCROLL_MULTIPLE = 12
+  const SCROLL_MULTIPLE = 8
 
   const dampenedScrollY = divide(scrollY.current, SCROLL_MULTIPLE)
 
