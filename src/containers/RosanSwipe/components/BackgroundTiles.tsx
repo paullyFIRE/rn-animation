@@ -16,8 +16,6 @@ const colors = {
 export default function BackgroundTiles({ translateY = 0 }) {
   const { current } = useCardAnimation()
 
-  current.progress.addListener(console.log)
-
   const columnOneWidth = width * 0.6
   const columnTwoWidth = width * 0.6
   const columnThreeWidth = width * 1.4
@@ -25,6 +23,42 @@ export default function BackgroundTiles({ translateY = 0 }) {
   const rowOneHeight = height * 0.8
   const rowTwoHeight = height * 0.3
   const rowThreeHeight = height * 0.4
+
+  const rowOneTransitions = {
+    transform: [
+      {
+        translateY: current.progress.interpolate({
+          inputRange: [0, 0.5],
+          outputRange: [-rowOneHeight, 0],
+          extrapolate: 'clamp',
+        }),
+      },
+    ],
+  }
+
+  const columnTwoTransitions = {
+    transform: [
+      {
+        translateY: current.progress.interpolate({
+          inputRange: [0.8, 1],
+          outputRange: [-rowTwoHeight, 0],
+          extrapolate: 'clamp',
+        }),
+      },
+    ],
+  }
+
+  const columnThreeTransitions = {
+    transform: [
+      {
+        translateY: current.progress.interpolate({
+          inputRange: [0.8, 1],
+          outputRange: [rowTwoHeight, 0],
+          extrapolate: 'clamp',
+        }),
+      },
+    ],
+  }
 
   return (
     <Animated.View
@@ -57,84 +91,50 @@ export default function BackgroundTiles({ translateY = 0 }) {
       >
         <View style={{ width: columnOneWidth, flexDirection: 'column' }}>
           <RNAnimated.View
-            style={{
-              backgroundColor: colors.navy3,
-              height: rowOneHeight,
-              transform: [
-                {
-                  translateY: current.progress.interpolate({
-                    inputRange: [0.5, 0.75, 1],
-                    outputRange: [-200, -120, 0],
-                  }),
-                },
-              ],
-            }}
+            style={[rowOneTransitions, { backgroundColor: colors.navy3, height: rowOneHeight }]}
           />
-          <View style={{ backgroundColor: colors.navy3, height: rowTwoHeight }} />
-          <View style={{ backgroundColor: colors.navy1, height: rowThreeHeight }} />
+          <RNAnimated.View
+            style={[columnTwoTransitions, { backgroundColor: colors.navy3, height: rowTwoHeight }]}
+          />
+          <RNAnimated.View
+            style={[
+              columnThreeTransitions,
+              { backgroundColor: colors.navy1, height: rowThreeHeight },
+            ]}
+          />
         </View>
 
         <View style={{ width: columnTwoWidth, flexDirection: 'column' }}>
           <RNAnimated.View
-            style={{
-              backgroundColor: colors.navy2,
-              height: rowOneHeight,
-              transform: [
-                {
-                  translateY: current.progress.interpolate({
-                    inputRange: [0.5, 0.75, 1],
-                    outputRange: [-200, -80, 0],
-                  }),
-                },
-              ],
-            }}
+            style={[rowOneTransitions, { backgroundColor: colors.navy2, height: rowOneHeight }]}
           />
-          <View style={{ backgroundColor: colors.navy3, height: rowTwoHeight }} />
-          <View style={{ backgroundColor: colors.navy1, height: rowThreeHeight }} />
+          <RNAnimated.View
+            style={[columnTwoTransitions, { backgroundColor: colors.navy3, height: rowTwoHeight }]}
+          />
+          <RNAnimated.View
+            style={[
+              columnThreeTransitions,
+              { backgroundColor: colors.navy1, height: rowThreeHeight },
+            ]}
+          />
         </View>
 
         <View style={{ width: columnThreeWidth, flexDirection: 'column' }}>
           <RNAnimated.View
-            style={{
-              backgroundColor: colors.flatGreen,
-              height: rowOneHeight,
-              transform: [
-                {
-                  translateY: current.progress.interpolate({
-                    inputRange: [0.5, 0.75, 1],
-                    outputRange: [-200, -30, 0],
-                  }),
-                },
-              ],
-            }}
+            style={[rowOneTransitions, { backgroundColor: colors.flatGreen, height: rowOneHeight }]}
+          />
+
+          <RNAnimated.View
+            style={[
+              columnTwoTransitions,
+              { backgroundColor: colors.flatRed, height: rowTwoHeight },
+            ]}
           />
           <RNAnimated.View
-            style={{
-              backgroundColor: colors.flatRed,
-              height: rowTwoHeight,
-              transform: [
-                {
-                  translateX: current.progress.interpolate({
-                    inputRange: [0.5, 0.75, 1],
-                    outputRange: [200, 80, 0],
-                  }),
-                },
-              ],
-            }}
-          />
-          <RNAnimated.View
-            style={{
-              backgroundColor: colors.navy1,
-              height: rowThreeHeight,
-              transform: [
-                {
-                  translateY: current.progress.interpolate({
-                    inputRange: [0.5, 0.75, 1],
-                    outputRange: [200, 120, 0],
-                  }),
-                },
-              ],
-            }}
+            style={[
+              columnThreeTransitions,
+              { backgroundColor: colors.navy1, height: rowThreeHeight },
+            ]}
           />
         </View>
       </Animated.View>
