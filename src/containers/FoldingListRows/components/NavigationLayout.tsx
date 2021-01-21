@@ -1,10 +1,10 @@
 import { useNavigation } from '@react-navigation/native'
-import { useCardAnimation } from '@react-navigation/stack'
+import { StackNavigationOptions, useCardAnimation } from '@react-navigation/stack'
 import React from 'react'
 import { View, Dimensions, Animated as RNAnimated } from 'react-native'
 const { width } = Dimensions.get('window')
 
-export default function NavigationLayout({  title, children }) {
+export default function NavigationLayout({ title, children }) {
   const navigation = useNavigation()
 
   React.useLayoutEffect(() => {
@@ -14,7 +14,7 @@ export default function NavigationLayout({  title, children }) {
       headerBackTitleVisible: false,
       headerTintColor: '#615798',
       headerLeftContainerStyle: {
-        paddingLeft: 8 * 2
+        paddingLeft: 8 * 2,
       },
     }
 
@@ -30,7 +30,7 @@ export default function NavigationLayout({  title, children }) {
       style={{
         flex: 1,
         backgroundColor: '#e9eef9',
-        paddingTop: 8 * 8,
+        paddingTop: 8 * 10,
         paddingHorizontal: width * 0.05,
       }}
     >

@@ -7,7 +7,6 @@ import Animated, {
   greaterThan,
   interpolate,
   neq,
-  useCode,
 } from 'react-native-reanimated'
 
 import { Dimensions } from 'react-native'
@@ -52,11 +51,11 @@ export default React.memo(function Dial(props) {
     const rotation = new Value(0)
 
     const radianToDegrees = (radianValue) => multiply(radianValue, divide(180, Math.PI))
-    const lowestMultipleOf10 = (value) => floor(divide(value, 10))
+    const dialTickSensitivity = (value) => floor(divide(value, 6))
 
     const deltaLowestMultiplesOfTen = sub(
-      lowestMultipleOf10(radianToDegrees(rotation)),
-      lowestMultipleOf10(radianToDegrees(previousRotation))
+      dialTickSensitivity(radianToDegrees(rotation)),
+      dialTickSensitivity(radianToDegrees(previousRotation))
     )
     const didTick = neq(deltaLowestMultiplesOfTen, 0)
 

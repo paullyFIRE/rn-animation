@@ -12,7 +12,7 @@ import { useCardAnimation } from '@react-navigation/stack'
 const { height } = Dimensions.get('window')
 
 export default function ClimateControl({ navigation }) {
-  const [temperature, setTemperature] = useState(16)
+  const [temperature, setTemperature] = useState(14)
 
   const { current } = useCardAnimation()
 
