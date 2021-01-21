@@ -76,8 +76,6 @@ export default function BackgroundTiles({ translateY }) {
 
   const translationY = interaction(translateY.current, gestureState)
 
-  useCode(() => call([translationY], console.log), [])
-
   const onGestureEvent = event([
     {
       nativeEvent: {

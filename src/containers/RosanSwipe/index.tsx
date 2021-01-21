@@ -24,7 +24,5 @@ export default function RosanSwipe() {
     )
   }, [])
 
-  useCode(() => call([translateY.current], console.log), [])
-
   return <BackgroundTiles {...{ translateY }} />
 }
